@@ -9,12 +9,9 @@
       - gnupg
 
 - name: Download fdio gpg key
-  ansible.builtin.get_url:
-    url: https://packagecloud.io/fdio/release/gpgkey
-    dest: /usr/share/keyrings/fdio.gpg
-    mode: "0644"
-    owner: root
-    group: root
+  ansible.builtin.command:
+    cmd: bash -c "curl -fsSL https://packagecloud.io/fdio/release/gpgkey | gpg --dearmor > /etc/apt/keyrings/fdio_release-archive-keyring.gpg"
+    creates: /etc/apt/keyrings/fdio_release-archive-keyring.gpg
 
 - name: Setup fdio apt repo
   ansible.builtin.copy:
