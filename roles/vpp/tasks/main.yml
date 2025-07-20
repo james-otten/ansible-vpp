@@ -16,11 +16,6 @@
     owner: root
     group: root
 
-- name: Setup fdio gpg key
-  ansible.builtin.command:
-    cmd: bash -c "echo /root/fdio.gpg | gpg --dearmor > /usr/share/keyrings/fdio.gpg"
-    creates: /usr/share/keyrings/fdio.gpg
-
 - name: Setup fdio apt repo
   ansible.builtin.copy:
     src: 99fd.io.list
