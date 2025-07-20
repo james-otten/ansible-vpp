@@ -1,0 +1,1 @@
+deb [signed-by=/usr/share/keyrings/fdio.gpg] https://packagecloud.io/fdio/release/debian bookworm main

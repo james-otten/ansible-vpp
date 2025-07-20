@@ -1,0 +1,50 @@
+---
+- name: Download fdio gpg key
+  ansible.builtin.get_url:
+    url: https://packagecloud.io/fdio/release/gpgkey
+    dest: /usr/share/keyrings/fdio.gpg
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Setup fdio apt repo
+  ansible.builtin.copy:
+    src: 99fd.io.list
+    dest: /etc/apt/sources.list.d/99fd.io.list
+    mode: "644"
+    owner: root
+    group: root
+
+- name: Install deps
+  ansible.builtin.apt:
+    lock_timeout: 240
+    update_cache: true
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - vpp
+      - vpp-plugin-core
+      - vpp-plugin-dpdk
+
+- name: VPP Config
+  ansible.builtin.template:
+    src: vpp.conf.j2
+    dest: /etc/vpp.conf
+    owner: root
+    group: root
+    mode: "640"
+  when: ansible_vpp_deploy_config is defined and ansible_vpp_deploy_config
+
+- name: Set sysctls
+  ansible.builtin.copy:
+    content: "{{ ansible_vpp_sysctls }}"
+    dest: /etc/sysctl.d/80-vpp.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_vpp_sysctls is defined and ansible_vpp_sysctls != ""
+
+- name: Apply sysctls
+  ansible.builtin.command:
+    cmd: sysctl --all
+  when: ansible_vpp_sysctls is defined and ansible_vpp_sysctls != ""
