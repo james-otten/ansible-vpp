@@ -34,7 +34,7 @@
     path: /var/log/vpp/
     state: directory
     mode: '0600'
-    owner: vpp
+    owner: root
     group: vpp
 
 - name: Setup vppcfg
