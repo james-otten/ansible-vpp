@@ -1,0 +1,29 @@
+- name: Install deps
+  ansible.builtin.apt:
+    lock_timeout: 240
+    update_cache: true
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+
+- name: Download fdio gpg key
+  ansible.builtin.command:
+    cmd: bash -c "curl -fsSL https://packagecloud.io/fdio/release/gpgkey | gpg --dearmor > /etc/apt/keyrings/fdio_release-archive-keyring.gpg"
+    creates: /etc/apt/keyrings/fdio_release-archive-keyring.gpg
+
+- name: Setup fdio apt repo
+  ansible.builtin.copy:
+    src: 99fd.io.list
+    dest: /etc/apt/sources.list.d/99fd.io.list
+    mode: "644"
+    owner: root
+    group: root
+
+- name: Install vpp
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+      - vpp
+      - vpp-plugin-core
+      - vpp-plugin-dpdk

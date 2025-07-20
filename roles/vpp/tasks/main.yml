@@ -6,28 +6,19 @@
     pkg:
       - apt-transport-https
       - ca-certificates
-      - gnupg
 
-- name: Download fdio gpg key
-  ansible.builtin.command:
-    cmd: bash -c "curl -fsSL https://packagecloud.io/fdio/release/gpgkey | gpg --dearmor > /etc/apt/keyrings/fdio_release-archive-keyring.gpg"
-    creates: /etc/apt/keyrings/fdio_release-archive-keyring.gpg
+- name: Check ansible_vpp_install_type
+  ansible.builtin.fail:
+    msg: "ansible_vpp_install_type is '{{ ansible_vpp_install_type }}' when it should be 'source' or 'binary'"
+  when: ansible_vpp_install_type is defined and ansible_vpp_install_type != "source" and ansible_vpp_install_type != "binary"
 
-- name: Setup fdio apt repo
-  ansible.builtin.copy:
-    src: 99fd.io.list
-    dest: /etc/apt/sources.list.d/99fd.io.list
-    mode: "644"
-    owner: root
-    group: root
+- name: Binary install
+  ansible.builtin.include_tasks: binary_install.yml
+  when: not (ansible_vpp_install_type is defined) or ansible_vpp_install_type != "source"
 
-- name: Install vpp
-  ansible.builtin.apt:
-    update_cache: true
-    pkg:
-      - vpp
-      - vpp-plugin-core
-      - vpp-plugin-dpdk
+- name: Source install
+  ansible.builtin.include_tasks: source_install.yml
+  when: ansible_vpp_install_type is defined and ansible_vpp_install_type == "source"
 
 - name: Create log directory so service doesn't crash
   ansible.builtin.file:
