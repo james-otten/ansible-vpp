@@ -34,5 +34,5 @@
 
 - name: Install package
   ansible.builtin.command:
-    cmd: dpkg -i build-root/*.deb
+    cmd: bash -c "dpkg -i build-root/*.deb"
     chdir: /root/vpp_src
