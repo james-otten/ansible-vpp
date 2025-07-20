@@ -1,0 +1,28 @@
+- name: Install deps
+  ansible.builtin.apt:
+    lock_timeout: 240
+    update_cache: true
+    pkg:
+      - git
+      - python3-pip
+      - python3.11-venv
+
+- name: Git checkout
+  ansible.builtin.git:
+    repo: "https://git.ipng.ch/ipng/vppcfg.git"
+    dest: /root/vppcfg
+    version: main
+
+- name: Create venv for vppcfg
+  ansible.builtin.command:
+    cmd: python3 -m venv /root/vppcfg_venv
+    creates: /root/vppcfg_venv
+
+- name: Copy vpp setup script
+  ansible.builtin.copy:
+    src: setup_vppcfg.sh
+    dest: /root/setup_vppcfg.sh
+
+- name: Run vpp setup script
+  ansible.builtin.command:
+    cmd: bash /root/setup_vppcfg.sh

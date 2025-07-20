@@ -26,6 +26,10 @@
       - vpp-plugin-core
       - vpp-plugin-dpdk
 
+- name: Setup vppcfg
+  ansible.builtin.include_tasks: vppcfg.yml
+  when: ansible_vpp_setup_vppcfg is defined and ansible_vpp_setup_vppcfg
+
 - name: VPP Config
   ansible.builtin.template:
     src: vpp.conf.j2
