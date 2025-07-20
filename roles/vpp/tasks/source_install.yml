@@ -10,7 +10,7 @@
   ansible.builtin.git:
     repo: "https://gerrit.fd.io/r/vpp"
     dest: /root/vpp_src
-    version: main
+    version: master
 
 - name: Install build deps via makefile
   ansible.builtin.command:
