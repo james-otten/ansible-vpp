@@ -29,6 +29,14 @@
       - vpp-plugin-core
       - vpp-plugin-dpdk
 
+- name: Create log directory so service doesn't crash
+  ansible.builtin.file:
+    path: /var/log/vpp/
+    state: directory
+    mode: '0600'
+    owner: vpp
+    group: vpp
+
 - name: Setup vppcfg
   ansible.builtin.include_tasks: vppcfg.yml
   when: ansible_vpp_setup_vppcfg is defined and ansible_vpp_setup_vppcfg
