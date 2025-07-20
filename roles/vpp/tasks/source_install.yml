@@ -14,17 +14,17 @@
 
 - name: Install build deps via makefile
   ansible.builtin.command:
-    cmd: make install-dep
-    chdir: /root/vpp_src
-
-- name: Run release build
-  ansible.builtin.command:
-    cmd: make build-release
+    cmd: make UNATTENDED=y install-dep
     chdir: /root/vpp_src
 
 - name: Get external dependencies
   ansible.builtin.command:
     cmd: make install-ext-deps
+    chdir: /root/vpp_src
+
+- name: Run release build
+  ansible.builtin.command:
+    cmd: make build-release
     chdir: /root/vpp_src
 
 - name: Run package build
