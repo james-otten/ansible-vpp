@@ -25,4 +25,4 @@
 
 - name: Run vpp setup script
   ansible.builtin.command:
-    cmd: bash /root/setup_vppcfg.sh
+    cmd: "bash /root/setup_vppcfg.sh"

@@ -1,4 +1,13 @@
 ---
+- name: Install deps
+  ansible.builtin.apt:
+    lock_timeout: 240
+    update_cache: true
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+
 - name: Download fdio gpg key
   ansible.builtin.get_url:
     url: https://packagecloud.io/fdio/release/gpgkey
@@ -6,6 +15,11 @@
     mode: "0644"
     owner: root
     group: root
+
+- name: Setup fdio gpg key
+  ansible.builtin.command:
+    cmd: bash -c "echo /root/fdio.gpg | gpg --dearmor > /usr/share/keyrings/fdio.gpg"
+    creates: /usr/share/keyrings/fdio.gpg
 
 - name: Setup fdio apt repo
   ansible.builtin.copy:
@@ -15,13 +29,10 @@
     owner: root
     group: root
 
-- name: Install deps
+- name: Install vpp
   ansible.builtin.apt:
-    lock_timeout: 240
     update_cache: true
     pkg:
-      - apt-transport-https
-      - ca-certificates
       - vpp
       - vpp-plugin-core
       - vpp-plugin-dpdk
@@ -52,3 +63,11 @@
   ansible.builtin.command:
     cmd: sysctl --all
   when: ansible_vpp_sysctls is defined and ansible_vpp_sysctls != ""
+
+- name: Add user {{ item }} to vpp group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    group: vpp
+    append: true
+  loop: "{{ ansible_vpp_add_user_to_vpp.split(',') }}"
+  when: ansible_vpp_add_user_to_vpp is defined and ansible_vpp_add_user_to_vpp != ""
